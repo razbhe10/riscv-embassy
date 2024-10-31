@@ -1,0 +1,51 @@
+[package]
+name = "test_riscv"
+version = "0.0.0"
+authors = [""]
+edition = "2018"
+license = "ISC"
+readme = "README.md"
+rust-version = "1.59"
+
+[dependencies]
+# Embassy Executor with RISC-V support
+embassy-executor = { version = "0.6.0", features = [
+    "arch-riscv32",
+    "executor-thread",
+    "integrated-timers",
+] }
+embassy-time = { version = "0.3.2", features = [
+    "defmt",
+    "defmt-timestamp-uptime",
+    "tick-hz-32_768",
+] }
+defmt = "0.3"
+
+embassy-time-driver = "0.1.0"
+
+e310x = { git = "https://github.com/riscv-rust/e310x", features = ["rt"] }
+# hifive1 = { version = "0.12.0", features = ["board-redv"] }
+# Use the GitHub repository for hifive1
+hifive1 = { git = "https://github.com/riscv-rust/e310x", features = [
+    "board-redv",
+] }
+panic-halt = "1.0.0"
+riscv = { version = "0.12.1", features = ["critical-section-single-hart"] }
+riscv-rt = "0.13.0"
+
+sifive = { path = "sifive" }
+
+static_cell = { version = "2.0.0" }
+portable-atomic = { version = "1.9.0", features = ["critical-section"] }
+
+
+# this lets you use `cargo fix`!
+[[bin]]
+name = "test_riscv"
+test = false
+bench = false
+
+[profile.release]
+codegen-units = 1 # better optimizations
+debug = true      # symbols are nice and they don't increase the size on Flash
+lto = true        # better optimizations
