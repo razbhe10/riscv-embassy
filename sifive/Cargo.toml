@@ -7,7 +7,7 @@ edition = "2021"
 embassy-time-driver = "0.1.0"
 embassy-time = { version = "0.3.2", optional = true }
 
-hifive1 = { git = "https://github.com/riscv-rust/e310x", features = [
+hifive1 = { git = "https://github.com/riscv-rust/e310x", branch = "ehv1", features = [
     "board-redv",
 ] }
 riscv = "0.12.1"
