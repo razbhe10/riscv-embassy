@@ -15,5 +15,7 @@ fn main() -> ! {
     // Configure clocks
     let _clocks = hifive1::clock::configure(p.PRCI, p.AONCLK, 320.mhz().into());
 
-    loop {}
+    loop {
+        riscv::asm::wfi();
+    }
 }

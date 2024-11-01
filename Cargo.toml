@@ -23,10 +23,9 @@ defmt = "0.3"
 
 embassy-time-driver = "0.1.0"
 
-e310x = { git = "https://github.com/riscv-rust/e310x", features = ["rt"] }
 # hifive1 = { version = "0.12.0", features = ["board-redv"] }
 # Use the GitHub repository for hifive1
-hifive1 = { git = "https://github.com/riscv-rust/e310x", features = [
+hifive1 = { git = "https://github.com/riscv-rust/e310x", branch = "ehv1", features = [
     "board-redv",
 ] }
 panic-halt = "1.0.0"

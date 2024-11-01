@@ -1,9 +1,7 @@
 // time_driver.rs
 
-use e310x::Clint as CLINT;
 use embassy_time_driver::{AlarmHandle, Driver};
-use hifive1::hal::{e310x, DeviceResources};
-use riscv::register::mie;
+use hifive1::hal::e310x::CLINT;
 
 struct E310xTimeDriver {}
 
@@ -13,8 +11,7 @@ embassy_time_driver::time_driver_impl!(static DRIVER: E310xTimeDriver = E310xTim
 impl Driver for E310xTimeDriver {
     fn now(&self) -> u64 {
         // Return the current time in ticks
-        let clint = unsafe { CLINT::steal() };
-        clint.mtime().read().bits() as u64
+        CLINT::mtime().read()
     }
 
     unsafe fn allocate_alarm(&self) -> Option<AlarmHandle> {
@@ -32,21 +29,10 @@ impl Driver for E310xTimeDriver {
     fn set_alarm(&self, _alarm: AlarmHandle, timestamp: u64) -> bool {
         // Schedule the wake-up event
         // Set the mtimecmp register to the specified timestamp
-        let dr = unsafe { DeviceResources::steal() };
-        let mut clint = dr.core_peripherals.clint;
-        clint.mtimecmp.set_mtimecmp(timestamp);
-        // let clint = unsafe { CLINT::steal() };
-        // clint
-        //     .mtimecmp()
-        //     .write(|w| unsafe { w.bits(timestamp as u32) });
-        // clint
-        //     .mtimecmph()
-        //     .write(|w| unsafe { w.bits((timestamp >> 32) as u32) });
+        CLINT::mtimecmp0().write(timestamp);
 
         // Enable timer interrupt
-        unsafe {
-            mie::set_mtimer();
-        };
+        unsafe { CLINT::mtimer_enable() };
         true
     }
 }
