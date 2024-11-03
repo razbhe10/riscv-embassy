@@ -73,17 +73,17 @@ async fn main(spawner: Spawner) {
     let pins = dr.pins;
 
     let blue_led_pin = pins!(pins, (led_blue));
-    let tx = pin!(pins, uart0_tx);
-    let rx = pin!(pins, uart0_rx);
+    let tx_pin = pin!(pins, uart0_tx);
+    let rx_pin = pin!(pins, uart0_rx);
 
-    enable_uart(p, tx.into_output(), rx.into_output());
-
-    let tled = blue_led_pin.into_output();
+    enable_uart(p, tx_pin.into_output(), rx_pin.into_output());
 
     spawner.spawn(my_task(1, PERIOD1)).unwrap();
     spawner.spawn(my_task(2, PERIOD2)).unwrap();
     spawner.spawn(my_task(3, PERIOD3)).unwrap();
-    spawner.spawn(blink_loop(tled)).unwrap();
+    spawner
+        .spawn(blink_loop(blue_led_pin.into_output()))
+        .unwrap();
 }
 
 fn enable_uart(
