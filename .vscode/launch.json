@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "SimNow-launch",
+            "name": "Red-V launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/uart_embassy_multi_tasks",
@@ -42,6 +42,28 @@
             "serverLaunchTimeout": 20000,
             "miDebuggerPath": "riscv64-unknown-elf-gdb",
             "miDebuggerServerAddress": ":3333",
-        }
+        },
+        {
+            "name": "QEMU-RISCV launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/uart_embassy_multi_tasks",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "riscv64-unknown-elf-gdb",
+            "miDebuggerServerAddress": "localhost:1234",
+            "preLaunchTask": "Run_QEMU",
+        },
     ]
 }
