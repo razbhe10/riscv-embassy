@@ -27,7 +27,12 @@ Welcome to the RISC-V Embassy Project repository! This project aims to provide a
     rustup target add riscv32imac-unknown-none-elf
     rustup target add riscv32imc-unknown-none-elf
     ```
-2. For Flashing install Jlink dependencies:
+2.  Install QEMU for RISC-V: Use the following command to install the QEMU package for RISC-V 32-bit systems:
+    ```sh
+    sudo apt update
+    sudo apt install qemu-system-riscv32
+    ```
+3. For Flashing install Jlink dependencies:
     * For Jlink website download the WIN version:
       https://www.segger.com/downloads/jlink/
     * While using WSL make sure your config file (`C:\Users\<UserName>\.wslconfig`) includes the following configuration:
