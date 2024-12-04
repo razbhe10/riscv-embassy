@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Red-V launch",
+            "name": "RedV-launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/uart_embassy_multi_tasks",
+            "program": "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceRoot}",
@@ -26,7 +26,7 @@
                     "text": "set remotetimeout 20"
                 },
                 {
-                    "text": "file ${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/uart_embassy_multi_tasks"
+                    "text": "file ${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks"
                 },
             ],
             "postRemoteConnectCommands": [
@@ -39,15 +39,16 @@
                     "text": "load"
                 },
             ],
-            "serverLaunchTimeout": 20000,
-            "miDebuggerPath": "riscv64-unknown-elf-gdb",
+            "miDebuggerPath": "gdb-multiarch",
             "miDebuggerServerAddress": ":3333",
+            "preLaunchTask": "Run_RedV",
+            "postDebugTask": "Stopt_Jlink_Server"
         },
         {
-            "name": "QEMU-RISCV launch",
+            "name": "QEMU-RISCV-launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/uart_embassy_multi_tasks",
+            "program": "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceRoot}",
@@ -61,9 +62,9 @@
                     "ignoreFailures": true
                 }
             ],
-            "miDebuggerPath": "riscv64-unknown-elf-gdb",
-            "miDebuggerServerAddress": "localhost:1234",
-            "preLaunchTask": "Run_QEMU",
+            "miDebuggerPath": "gdb-multiarch",
+            "miDebuggerServerAddress": ":1234",
+            "preLaunchTask": "Run_QEMU"
         },
     ]
 }
