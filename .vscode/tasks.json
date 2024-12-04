@@ -1,12 +1,66 @@
 {
     "version": "2.0.0",
     "tasks": [
+        /*-------------------------------------------------------- 
+        -                                                        -
+        -                        Build Tasks                     -
+        -                                                        -
+        ---------------------------------------------------------*/
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "cargo build --example blocking_uart_sifive_tasks",
+            "detail": "Build the blocking_uart_sifive_tasks example",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "cargo clean",
+            "detail": "Clean the blocking_uart_sifive_tasks example",
+            "problemMatcher": []
+        },
+        {
+            "label": "Gen_Bin_File",
+            "type": "shell",
+            "command": "riscv64-unknown-elf-objcopy",
+            "args": [
+                "-O",
+                "binary",
+                "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks",
+                "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks.bin"
+            ],
+            "dependsOn": "Build",
+            "detail": "Build the blocking_uart_sifive_tasks and generate .bin file"
+        },
+        {
+            "label": "Gen_Dump_File",
+            "type": "shell",
+            "command": "riscv64-unknown-elf-objdump",
+            "args": [
+                "-D",
+                "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks",
+                ">",
+                "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks.dump"
+            ],
+            "dependsOn": "Build",
+            "detail": "Build the blocking_uart_sifive_tasks and generate a dump file"
+        },
+        /*-------------------------------------------------------- 
+        -                                                        -
+        -                        QEMU Tasks                      -
+        -                                                        -
+        ---------------------------------------------------------*/
         {
             "label": "Run_QEMU_Server",
             "type": "shell",
-            "command": "echo Starting QEMU Server; qemu-system-riscv32 -nographic -machine sifive_e,revb=true -bios none -net none -pidfile qemu.pid -chardev stdio,id=con,mux=on -serial chardev:con -mon chardev=con,mode=readline -S -gdb tcp::1234 -kernel  ${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/uart_embassy_multi_tasks",
-            // "command": "echo Starting QEMU Server; qemu-system-riscv32 -nographic -M virt -smp 4 -m 2G -S -gdb tcp::1234 -bios /usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.bin -device loader,file=/home/razbe/riscv-embassy/target/riscv32imc-unknown-none-elf/debug/examples/uart_embassy_multi_tasks,addr=0x20000000",
+            "command": "echo Starting QEMU Server; qemu-system-riscv32 -nographic -machine sifive_e,revb=true -bios none -net none -pidfile qemu.pid -chardev stdio,id=con,mux=on -serial chardev:con -mon chardev=con,mode=readline -S -gdb tcp::1234 -kernel  ${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks",
             "isBackground": true,
+            "dependsOn": "Build",
             "problemMatcher": [
                 {
                     "pattern": [
@@ -23,8 +77,22 @@
                         "endsPattern": "."
                     }
                 }
-            ]
+            ],
+            "detail": "Start the QEMU server for the blocking_uart_sifive_tasks example"
         },
+        {
+            "label": "Run_QEMU",
+            "dependsOn": [
+                "Build",
+                "Run_QEMU_Server"
+            ],
+            "detail": "Build and run the QEMU server for the blocking_uart_sifive_tasks example"
+        },
+        /*-------------------------------------------------------- 
+        -                                                        -
+        -                        Flash Tasks                     -
+        -                                                        -
+        ---------------------------------------------------------*/
         {
             "label": "Flash",
             "type": "shell",
@@ -33,7 +101,7 @@
                 "-q",
                 "-x",
                 "${workspaceFolder}/gdb_init",
-                "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/uart_embassy_multi_tasks"
+                "${workspaceFolder}/target/riscv32imc-unknown-none-elf/debug/examples/blocking_uart_sifive_tasks"
             ],
             "isBackground": true,
             "problemMatcher": [
@@ -52,19 +120,57 @@
                         "endsPattern": "."
                     }
                 }
-            ]
-        },
-        {
-            "label": "Build",
-            "type": "shell",
-            "command": "cargo build --example uart_embassy_multi_tasks",
-        },
-        {
-            "label": "Run_QEMU",
+            ],
             "dependsOn": [
                 "Build",
-                "Run_QEMU_Server"
-            ]
-        }
+                "Start_Jlink_Server"
+            ],
+            "dependsOrder": "sequence",
+            "detail": "Flash the blocking_uart_sifive_tasks example using GDB"
+        },
+        /*-------------------------------------------------------- 
+        -                                                        -
+        -                        JLink Server Tasks              -
+        -                                                        -
+        ---------------------------------------------------------*/
+        {
+            "label": "Start_Jlink_Server",
+            "type": "shell",
+            "command": "powershell.exe -Command \"JLinkGDBServer -device FE310 -if JTAG -speed 4000 -port 3333 -nogui\"",
+            "dependsOn": "Build",
+            "presentation": {
+                "echo": false,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Start the JLink GDB server"
+        },
+        {
+            "label": "Stopt_Jlink_Server",
+            "type": "shell",
+            "command": "powershell.exe -Command \"Stop-Process -Name JLinkGDBServer -Force\"",
+            "presentation": {
+                "echo": false,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Stop the JLink GDB server"
+        },
+        {
+            "label": "Run_RedV",
+            "dependsOn": [
+                "Build",
+                "Start_Jlink_Server"
+            ],
+            "detail": "Build and start the JLink GDB server for the blocking_uart_sifive_tasks example"
+        },
     ]
 }

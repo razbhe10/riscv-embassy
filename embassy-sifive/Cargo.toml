@@ -1,0 +1,41 @@
+[package]
+name = "embassy-sifive"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+embassy-time-driver = { git = "https://github.com/embassy-rs/embassy", optional = true }
+embassy-time = { git = "https://github.com/embassy-rs/embassy", optional = true }
+embassy-sync = { git = "https://github.com/embassy-rs/embassy" }
+embassy-hal-internal = { git = "https://github.com/embassy-rs/embassy", features = [
+    "prio-bits-3",
+] }
+
+riscv = { version = "0.12.1", features = [
+    "critical-section-single-hart",
+    "riscv-macros",
+] }
+e310x = { git = "https://github.com/riscv-rust/e310x", branch = "ehv1", features = [
+    "rt",
+    "critical-section",
+] }
+riscv-rt = { version = "0.13.0", features = ["single-hart"] }
+
+embedded-hal = { version = "1.0.0" }
+embedded-hal-nb = { version = "1.0.0" }
+nb = "1.0.0"
+
+defmt = { version = "0.3", optional = true }
+panic-halt = "1.0.0"
+portable-atomic = { version = "1.9", default-features = false }
+
+critical-section = { version = "1.2.0" }
+
+[features]
+time = ["dep:embassy-time"]
+defmt = ["dep:defmt"]
+## Enable custom embassy time-driver implementation
+time-driver = ["dep:embassy-time-driver", "embassy-time-driver?/tick-hz-32_768"]
+
+[dev-dependencies]
+embassy-executor = { git = "https://github.com/embassy-rs/embassy" }
